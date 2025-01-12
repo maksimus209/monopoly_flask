@@ -12,3 +12,7 @@ function rollDice() {
         })
         .catch(error => console.error('Błąd:', error));
 }
+let activePlayer = 1; // Inicjalnie Gracz 1 zaczyna
+
+// Inicjalne ustawienie tekstu przycisku
+document.addEventListener("DOMContentLoaded", updateButtonText);

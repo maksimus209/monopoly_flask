@@ -24,7 +24,7 @@ body {
         "field-31 field-30 field-29 field-28 field-27 field-26 field-25 field-24 field-23 field-22 field-21";
     grid-gap: 0; /* Brak odstępów między polami */
     width: 90vw; /* Cała szerokość okna przeglądarki */
-    height: 10vh; /* Cała wysokość okna przeglądarki */
+    height: 8vh; /* Cała wysokość okna przeglądarki */
     margin: 0 auto;
 }
 
