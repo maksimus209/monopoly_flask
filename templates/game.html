@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monopoly - Gra</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Plansza gry -->
+        <div class="board" id="game-board">
+            {% for field in fields %}
+            <div class="field field-id-{{ field.field_ID }}" id="field-{{ loop.index }}" style="grid-area: field-{{ loop.index }};">
+                <p>{{ field.name }}</p>
+                {% if field.price %}
+                <p>Cena: {{ field.price }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Kontrolki gry -->
+        <div id="controls">
+            <button id="roll-dice-btn" onclick="rollDice()">Rzuć kostkami</button>
+            <p id="dice-result"></p>
+        </div>
+
+        <!-- Informacje o graczach -->
+        <div id="player-info">
+    <h2>Informacje o graczach:</h2>
+    {% for player in players %}
+    <div class="player">
+        <p>Gracz {{ loop.index }} ({{ player.name }}):</p>
+        <ul>
+            <li>Saldo: {{ player.balance }}</li>
+            <li>Pozycja: {{ board.get_field_by_position(player.position).name }}</li>
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+    </div>
+
+    <!-- Podłącz plik script.js -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

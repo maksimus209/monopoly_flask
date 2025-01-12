@@ -1,0 +1,103 @@
+/* ==================== Globalne style ==================== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+    overflow: hidden; /* Ukrywa przewijanie */
+}
+
+/* ==================== Układ planszy ==================== */
+.board {
+    display: grid;
+    grid-template-areas:
+        "field-1 field-2 field-3 field-4 field-5 field-6 field-7 field-8 field-9 field-10 field-11"
+        "field-40 .       .       .       .       .       .       .       .       .       field-12"
+        "field-39 .       .       .       .       .       .       .       .       .       field-13"
+        "field-38 .       .       .       .       .       .       .       .       .       field-14"
+        "field-37 .       .       .       .       .       .       .       .       .       field-15"
+        "field-36 .       .       .       .       .       .       .       .       .       field-16"
+        "field-35 .       .       .       .       .       .       .       .       .       field-17"
+        "field-34 .       .       .       .       .       .       .       .       .       field-18"
+        "field-33 .       .       .       .       .       .       .       .       .       field-19"
+        "field-32 .       .       .       .       .       .       .       .       .       field-20"
+        "field-31 field-30 field-29 field-28 field-27 field-26 field-25 field-24 field-23 field-22 field-21";
+    grid-gap: 0; /* Brak odstępów między polami */
+    width: 90vw; /* Cała szerokość okna przeglądarki */
+    height: 10vh; /* Cała wysokość okna przeglądarki */
+    margin: 0 auto;
+}
+
+/* ==================== Style pól planszy ==================== */
+.field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid #000; /* Obramowanie pól */
+    font-size: 16px; /* Powiększenie tekstu */
+    font-weight: bold;
+    background-color: #fff; /* Domyślny kolor pola */
+    width: auto; /* Automatyczna szerokość w układzie grid */
+    height: auto; /* Automatyczna wysokość w układzie grid */
+}
+
+/* ==================== Kolory pól ==================== */
+.field-id-1 { background-color: #FFFFFF; } /* Start */
+.field-id-2 { background-color: #8B4513; color: #FFFFFF; } /* Brązowy */
+.field-id-3 { background-color: #ADD8E6; } /* Błękitny */
+.field-id-4 { background-color: #FFC0CB; } /* Różowy */
+.field-id-5 { background-color: #FFA500; } /* Pomarańczowy */
+.field-id-6 { background-color: #FF0000; } /* Czerwony */
+.field-id-7 { background-color: #FFFF00; } /* Żółty */
+.field-id-8 { background-color: #008000; color: #FFFFFF; } /* Zielony */
+.field-id-9 { background-color: #800080; color: #FFFFFF; } /* Fioletowy */
+.field-id-10 { background-color: #808080; } /* Szary */
+.field-id-11 { background-color: #4682B4; } /* Utility */
+.field-id-12 { background-color: #87CEFA; } /* Kasa Społeczna */
+.field-id-13 { background-color: #BA55D3; } /* Szansa */
+.field-id-14 { background-color: #D3D3D3; } /* Podatek */
+.field-id-15 { background-color: #FFA07A; } /* Więzienie */
+.field-id-16 { background-color: #FFD700; } /* Parking */
+.field-id-17 { background-color: #FF4500; } /* Idź do Więzienia */
+
+/* ==================== Style dla graczy ==================== */
+#controls, #player-info {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#roll-dice-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#roll-dice-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+#player-info {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+#player-info .player {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+
+/* ==================== Responsywność ==================== */
+@media (max-width: 768px) {
+    .field {
+        font-size: 14px; /* Zmniejsz tekst na mniejszych ekranach */
+    }
+}
