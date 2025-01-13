@@ -26,12 +26,12 @@ def init_game_state():
     for _ in range(NUM_PLAYERS):
         positions.append([None, None, None, None])
     return {
-        'positions': positions,
+        'positions': positions,  # positions[p][i]
         'current_player': 0,
         'rolls_in_a_row': 0,
         'last_roll': 0,
         'nickname': ["Gracz", "AI1", "AI2", "AI3"],
-        'colors': PLAYER_COLORS,
+        'colors': PLAYER_COLORS,  # kolor dla graczy 0..3
         'winner': None
     }
 
@@ -47,6 +47,7 @@ def get_home_range(p):
     return (start_home, end_home)
 
 def do_capture_if_any(state, p, new_pos):
+    """Jeśli new_pos jest w pętli 0..39, zbij pionki przeciwnika tam stojące."""
     if not (0 <= new_pos < BOARD_SIZE):
         return
     positions = state['positions']
@@ -61,6 +62,7 @@ def move_pawn(state, p, pawn_idx, steps):
     positions = state['positions']
     current_pos = positions[p][pawn_idx]
 
+    # 1. Baza
     if current_pos is None:
         if steps == 6:
             start_pos = get_start_field(p)
@@ -68,6 +70,8 @@ def move_pawn(state, p, pawn_idx, steps):
             positions[p][pawn_idx] = start_pos
         else:
             return
+
+    # 2. Pętla (0..39)
     elif isinstance(current_pos, int) and 0 <= current_pos < BOARD_SIZE:
         home_start, home_end = get_home_range(p)
         distance_to_home = (get_start_field(p) - current_pos) % BOARD_SIZE
@@ -82,6 +86,8 @@ def move_pawn(state, p, pawn_idx, steps):
             new_pos = (current_pos + steps) % BOARD_SIZE
             do_capture_if_any(state, p, new_pos)
             positions[p][pawn_idx] = new_pos
+
+    # 3. Ścieżka domowa (40..55)
     elif isinstance(current_pos, int) and 40 <= current_pos <= 55:
         home_start, home_end = get_home_range(p)
         new_home_pos = current_pos + steps
@@ -89,10 +95,13 @@ def move_pawn(state, p, pawn_idx, steps):
             positions[p][pawn_idx] = 'in_dome'
         else:
             positions[p][pawn_idx] = new_home_pos
+
     else:
+        # 'in_dome' -> nic nie robimy
         pass
 
 def check_winner(state):
+    """Sprawdza, czy któryś gracz ma 4 pionki w 'in_dome'."""
     positions = state['positions']
     for p in range(NUM_PLAYERS):
         in_dome_count = sum(1 for pos in positions[p] if pos == 'in_dome')
@@ -101,6 +110,7 @@ def check_winner(state):
     return None
 
 def all_pawns_blocked_or_in_dome(state, p):
+    """Czy gracz p ma jakikolwiek ruch?"""
     positions = state['positions'][p]
     roll = state['last_roll']
     can_out = (roll == 6)
@@ -113,6 +123,7 @@ def all_pawns_blocked_or_in_dome(state, p):
     return True
 
 def calc_final_position(state, p, pawn_idx, steps):
+    """AI używa do oceny, gdzie wyląduje pionek przy danym rzucie."""
     pos = state['positions'][p][pawn_idx]
     if pos is None:
         return get_start_field(p)
@@ -123,7 +134,7 @@ def calc_final_position(state, p, pawn_idx, steps):
             leftover = steps - distance_to_home
             home_pos = home_start + (leftover - 1)
             if home_pos > home_end:
-                return 9999
+                return 9999  # 'in_dome'
             else:
                 return home_pos
         else:
@@ -214,9 +225,8 @@ def index():
 @app.route('/new_game', methods=['GET','POST'])
 def new_game():
     """
-    Widok do wyboru trybu:
-    - Po wybraniu 'computer', przekierowujemy do configure_player
-    - w config_player user poda nickname, color i wtedy tworzymy stan gry
+    Widok do wyboru trybu.
+    Po wybraniu 'computer', -> /configure_player
     """
     if request.method == 'POST':
         mode = request.form.get('mode')
@@ -226,25 +236,33 @@ def new_game():
             return "Inne tryby w budowie!"
     return render_template('new_game.html')
 
-@app.route('/configure_player', methods=['GET','POST'])
+
+@app.route('/configure_player', methods=['GET', 'POST'])
 def configure_player():
-    """
-    User podaje nickname i color
-    Po wysłaniu formularza -> tworzymy stan gry, ustawiamy session i redirect do /game
-    """
     if request.method == 'POST':
-        # Tworzymy stan gry
+        # 1) Tworzymy stan gry
         state = init_game_state()
 
+        # 2) Pobieramy wybrany kolor człowieka
+        user_color = request.form.get('color', 'czerwony')
         nickname = request.form.get('nickname', 'Gracz1')
-        color = request.form.get('color', 'czerwony')
+
         state['nickname'][0] = nickname
-        state['colors'][0] = color
+
+        # 3) Przydzielamy kolory
+        all_colors = ["czerwony", "niebieski", "zielony", "żółty"]
+        all_colors.remove(user_color)
+        # Człowiek
+        state['colors'][0] = user_color
+        # AI
+        for i in range(1,4):
+            state['colors'][i] = all_colors[i-1]
 
         session['game_state'] = state
         return redirect(url_for('game'))
 
     return render_template('configure_player.html')
+
 
 @app.route('/load_game')
 def load_game():
@@ -256,7 +274,7 @@ def results():
 
 @app.route('/instructions')
 def instructions():
-    return "Instrukcja: Chińczyk z 4 graczami (1 ludzki + 3 AI)."
+    return "Instrukcja: Chińczyk z 4 graczami."
 
 @app.route('/game', methods=['GET','POST'])
 def game():
@@ -296,7 +314,7 @@ def game():
         session['game_state'] = state
         return redirect(url_for('game'))
 
-    # GET -> sprawdzamy, czy AI ma ruch
+    # GET -> AI ma ruch?
     cp = state['current_player']
     if is_ai_player(cp):
         if state['last_roll'] == 0:
@@ -329,7 +347,6 @@ def game():
         return redirect(url_for('game'))
 
     return render_template('game.html', game_state=state)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

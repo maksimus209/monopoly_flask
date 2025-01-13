@@ -1,37 +1,60 @@
+body {
+    text-align: center;
+}
+
+/* Plansza krzyża 11x11 */
 .board {
   display: grid;
-  grid-template-columns: repeat(8, 40px);
-  grid-template-rows: repeat(5, 40px);
+  grid-template-columns: repeat(11, 40px);
+  grid-template-rows: repeat(11, 40px);
   gap: 2px;
   margin-bottom: 20px;
 }
-.cell {
+
+/* .cell i .void */
+.cell, .void {
   width: 40px;
   height: 40px;
-  background-color: #ddd;
-  border: 1px solid #999;
   position: relative;
-}
-.cell-red-start {
-  background-color: #f88;
-}
-.cell-blue-start {
-  background-color: #88f;
-}
-.cell-green-start {
-  background-color: #8f8;
-}
-.cell-yellow-start {
-  background-color: #ff8;
+  border: 1px solid #999;
 }
 
-.base {
-  display: grid;
-  grid-template-columns: repeat(8, 40px);
-  grid-template-rows: repeat(2, 40px);
-  gap: 2px;
-  margin-top: 20px;
+.cell {
+  background-color: #ddd; /* neutral (gdy nie stoi pionek) */
 }
+
+.void {
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+
+/* Pastelowe tła zależne od koloru pionka */
+.cell-red {
+  background-color: #fdd; /* jasnoczerwone */
+}
+.cell-blue {
+  background-color: #ddf; /* jasnoniebieskie */
+}
+.cell-green {
+  background-color: #dfd; /* jasnozielone */
+}
+.cell-yellow {
+  background-color: #ffd; /* jasnożółte */
+}
+
+/* Baza 4 wiersze × 4 kolumny */
+.base {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 40px);
+  grid-template-rows: repeat(4, 40px);
+  gap: 2px;
+}
+
+.base-row {
+  display: contents;
+}
+
 .base-cell {
   width: 40px;
   height: 40px;
@@ -42,15 +65,19 @@
 
 .pawn {
   position: absolute;
-  width: 36px; height: 36px;
-  top: 2px; left: 2px;
+  top: 2px;
+  left: 2px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   text-align: center;
   line-height: 36px;
   font-size: 12px;
-  overflow: hidden;
   color: #fff;
+  overflow: hidden;
 }
+
+/* Kolory pionków (w bazie i w board) */
 .color-czerwony {
   background-color: red;
 }
