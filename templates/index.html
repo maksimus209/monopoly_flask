@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monopoly - Strona Główna</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Witamy w Monopoly!</h1>
-        <div class="menu">
-            <a href="/game" class="btn">Nowa Gra</a>
-            <a href="/save-load" class="btn">Wczytaj Grę</a>
-            <a href="/instructions" class="btn">Zasady Gry</a>
-        </div>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Menu Główne</h2>
+<ul>
+    <li><a href="{{ url_for('new_game') }}">Rozpocznij Grę</a></li>
+    <li><a href="{{ url_for('load_game') }}">Wczytaj Grę</a></li>
+    <li><a href="{{ url_for('results') }}">Wyniki</a></li>
+    <li><a href="{{ url_for('instructions') }}">Instrukcja</a></li>
+</ul>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Wybierz Tryb Gry</h2>
+<form action="{{ url_for('new_game') }}" method="POST">
+    <div>
+        <label>
+            <input type="radio" name="mode" value="computer" checked>
+            Graj przeciwko komputerowi
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="radio" name="mode" value="hotseat">
+            Hot-seat (w budowie)
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="radio" name="mode" value="multiplayer">
+            Multiplayer (w budowie)
+        </label>
+    </div>
+    <button type="submit">Dalej</button>
+</form>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Konfiguracja Gracza</h2>
+<form action="{{ url_for('configure_player') }}" method="POST">
+    <div>
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" placeholder="Gracz1">
+    </div>
+    <div>
+        <label for="color">Kolor pionków:</label>
+        <select name="color" id="color">
+            <option value="czerwony">czerwony</option>
+            <option value="niebieski">niebieski</option>
+            <option value="zielony">zielony</option>
+            <option value="żółty">żółty</option>
+        </select>
+    </div>
+    <button type="submit">Rozpocznij grę</button>
+</form>
+{% endblock %}

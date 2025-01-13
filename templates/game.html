@@ -1,47 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monopoly - Gra</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <div class="container">
-        <!-- Plansza gry -->
-        <div class="board" id="game-board">
-            {% for field in fields %}
-            <div class="field field-id-{{ field.field_ID }}" id="field-{{ loop.index }}" style="grid-area: field-{{ loop.index }};">
-                <p>{{ field.name }}</p>
-                {% if field.price %}
-                <p>Cena: {{ field.price }}</p>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
+{% extends "base.html" %}
+{% block content %}
 
-        <!-- Kontrolki gry -->
-        <div id="controls">
-            <button id="roll-dice-btn" onclick="rollDice()">Rzuć kostkami</button>
-            <p id="dice-result"></p>
-        </div>
+<h2>Rozgrywka w Chińczyka – Prostokąt 5×8</h2>
 
-        <!-- Informacje o graczach -->
-        <div id="player-info">
-    <h2>Informacje o graczach:</h2>
-    {% for player in players %}
-    <div class="player">
-        <p>Gracz {{ loop.index }} ({{ player.name }}):</p>
-        <ul>
-            <li>Saldo: {{ player.balance }}</li>
-            <li>Pozycja: {{ board.get_field_by_position(player.position).name }}</li>
-        </ul>
-    </div>
-    {% endfor %}
+<div class="info-panel">
+    {% if game_state.winner is not none %}
+        <h3>Wygrał: {{ game_state.nickname[game_state.winner] }}</h3>
+        <p><a href="{{ url_for('index') }}">Wróć do Menu</a></p>
+    {% else %}
+        <p>Tura: {{ game_state.nickname[game_state.current_player] }}</p>
+        <p>Ostatni rzut: {{ game_state.last_roll }}</p>
+        <p>Szóstki z rzędu: {{ game_state.rolls_in_a_row }} / {{ 3 }}</p>
+
+        {% if game_state.current_player == 0 %}
+            <!-- Ludzki gracz -->
+            {% if game_state.last_roll == 0 %}
+                <form method="POST">
+                    <button type="submit" name="action" value="roll">Rzuć kostką</button>
+                </form>
+            {% else %}
+                <p>Wybierz pionek:</p>
+                {% for i in range(4) %}
+                  <form method="POST" style="display:inline;">
+                    <button type="submit" name="action" value="move_{{ i }}">
+                      Pionek {{ i+1 }}
+                    </button>
+                  </form>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <p>Komputer myśli...</p>
+        {% endif %}
+    {% endif %}
 </div>
-    </div>
 
-    <!-- Podłącz plik script.js -->
-    <script src="/static/script.js"></script>
-</body>
-</html>
+<!-- PRZYKŁADOWE mapowanie 5x8 = 40 pól.
+     W tym przykładzie: rogi to 0,7,32,39 (lub inna kolejność).
+     W praktyce musisz spójnie odwzorować to w BOARD_MAPPING w kodzie app.py.
+-->
+
+{% set BOARD_MAPPING = {
+  0:(0,0),    1:(0,1), 2:(0,2), 3:(0,3), 4:(0,4), 5:(0,5), 6:(0,6), 7:(0,7),
+  8:(1,7),    9:(2,7), 10:(3,7), 11:(4,7),
+  12:(4,6),   13:(4,5), 14:(4,4), 15:(4,3), 16:(4,2), 17:(4,1),
+  18:(4,0),   19:(3,0), 20:(2,0), 21:(1,0),
+  22:(1,1),   23:(1,2), 24:(1,3), 25:(1,4), 26:(1,5), 27:(1,6),
+  28:(2,6),   29:(3,6),
+  30:(3,5),   31:(3,4), 32:(3,3), 33:(3,2), 34:(3,1),
+  35:(2,1),   36:(2,2), 37:(2,3), 38:(2,4), 39:(2,5)
+} %}
+
+<!-- Główna tablica .board -->
+<div class="board">
+  {% for row in range(5) %}
+    <div class="row">
+      {% for col in range(8) %}
+        {# Domyślnie .cell #}
+        {% set cell_type = "cell" %}
+
+        {# Koloruj rogi - startowe pola #}
+        {% if (row == 0 and col == 0) %}
+            {% set cell_type = cell_type ~ " cell-red-start" %}
+        {% elif (row == 0 and col == 7) %}
+            {% set cell_type = cell_type ~ " cell-blue-start" %}
+        {% elif (row == 4 and col == 7) %}
+            {% set cell_type = cell_type ~ " cell-green-start" %}
+        {% elif (row == 4 and col == 0) %}
+            {% set cell_type = cell_type ~ " cell-yellow-start" %}
+        {% endif %}
+
+        <div class="{{ cell_type }}">
+          <!-- Szukamy pionków, które mają pos < 40 i BOARD_MAPPING[pos] == (row,col) -->
+          {% for p in range(4) %}
+            {% for i in range(4) %}
+              {% set pos = game_state.positions[p][i] %}
+              {% if pos is not none and pos != 'in_dome' and pos < 40 %}
+                  {% set coords = BOARD_MAPPING[pos] if pos in BOARD_MAPPING else (None, None) %}
+                  {% if coords[0] == row and coords[1] == col %}
+                      <div class="pawn color-{{ game_state.colors[p] }}">
+                          {{ game_state.nickname[p] }}{{ i+1 }}
+                      </div>
+                  {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+<!-- BAZA: 2 wiersze × 8 kolumn (4 pola na gracza) -->
+<div class="base">
+  {% for base_row in range(2) %}
+    <div class="base-row">
+      {% for base_col in range(8) %}
+        <div class="base-cell">
+          {# p=0 => (base_row=0, base_col=0..3)
+             p=1 => (base_row=0, base_col=4..7)
+             p=2 => (base_row=1, base_col=0..3)
+             p=3 => (base_row=1, base_col=4..7)
+          #}
+          {% set p = None %}
+          {% set iP = None %}
+
+          {% if base_row == 0 and base_col < 4 %}
+              {% set p = 0 %}
+              {% set iP = base_col %}
+          {% elif base_row == 0 and base_col >=4 %}
+              {% set p = 1 %}
+              {% set iP = base_col - 4 %}
+          {% elif base_row == 1 and base_col < 4 %}
+              {% set p = 2 %}
+              {% set iP = base_col %}
+          {% elif base_row == 1 and base_col >=4 %}
+              {% set p = 3 %}
+              {% set iP = base_col - 4 %}
+          {% endif %}
+
+          {% if p is not none %}
+              {% set pos = game_state.positions[p][iP] %}
+              {% if pos is none %}
+                  <!-- Pionek w bazie -->
+                  <div class="pawn color-{{ game_state.colors[p] }}">
+                      {{ game_state.nickname[p] }}{{ iP+1 }}
+                  </div>
+              {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
