@@ -1,93 +1,157 @@
 body {
     text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
-/* Plansza krzyża 11x11 */
 .board {
-  display: grid;
-  grid-template-columns: repeat(11, 40px);
-  grid-template-rows: repeat(11, 40px);
-  gap: 2px;
-  margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(11, 40px);
+    grid-template-rows: repeat(11, 40px);
+    gap: 2px;
+    justify-content: center;
+    margin: 20px auto;
+    background-color: #ddd;
+    padding: 10px;
+    border: 2px solid #999;
+    position: relative;
 }
 
-/* .cell i .void */
 .cell, .void {
-  width: 40px;
-  height: 40px;
-  position: relative;
-  border: 1px solid #999;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 40px;
+    position: relative;
+    border: 1px solid #999;
 }
 
 .cell {
-  background-color: #ddd; /* neutral (gdy nie stoi pionek) */
+    background-color: #eee; /* neutral */
 }
 
 .void {
-  background-color: #fff;
-  border: 1px solid #fff;
+    background-color: #fff;
+    border: none;
 }
 
-/* Pastelowe tła zależne od koloru pionka */
+/* Pastelowe kolory pól startowych */
 .cell-red {
-  background-color: #fdd; /* jasnoczerwone */
+    background-color: #fdd; /* jasnoczerwone */
 }
 .cell-blue {
-  background-color: #ddf; /* jasnoniebieskie */
+    background-color: #ddf; /* jasnoniebieskie */
 }
 .cell-green {
-  background-color: #dfd; /* jasnozielone */
+    background-color: #dfd; /* jasnozielone */
 }
 .cell-yellow {
-  background-color: #ffd; /* jasnożółte */
+    background-color: #ffd; /* jasnożółte */
 }
 
-/* Baza 4 wiersze × 4 kolumny */
+/* Pastelowe kolory pól domków */
+.cell-home-red {
+    background-color: #fbb; /* pastel czerwony */
+}
+.cell-home-blue {
+    background-color: #bbf; /* pastel niebieski */
+}
+.cell-home-green {
+    background-color: #bfb; /* pastel zielony */
+}
+.cell-home-yellow {
+    background-color: #ffb; /* pastel żółty */
+}
+
+/* Stylizacja numeracji pól */
+.cell span {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 10px;
+    color: #555;
+}
+
+/* Stylizacja bazy */
 .base {
-  margin-top: 20px;
-  display: grid;
-  grid-template-columns: repeat(4, 40px);
-  grid-template-rows: repeat(4, 40px);
-  gap: 2px;
+    display: grid;
+    grid-template-columns: repeat(4, 40px);
+    grid-template-rows: repeat(4, 40px);
+    gap: 2px;
+    justify-content: center;
+    margin: 20px auto;
+    background-color: #ccc;
+    padding: 10px;
+    border: 2px solid #999;
 }
 
 .base-row {
-  display: contents;
+    display: contents;
 }
 
 .base-cell {
-  width: 40px;
-  height: 40px;
-  background-color: #eee;
-  border: 1px solid #bbb;
-  position: relative;
+    width: 40px;
+    height: 40px;
+    background-color: #eee;
+    border: 1px solid #bbb;
+    position: relative;
 }
 
+/* Pionek */
 .pawn {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 36px;
-  font-size: 12px;
-  color: #fff;
-  overflow: hidden;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-size: 12px;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Kolory pionków (w bazie i w board) */
 .color-czerwony {
-  background-color: red;
+    background-color: red;
 }
 .color-niebieski {
-  background-color: blue;
+    background-color: blue;
 }
 .color-zielony {
-  background-color: green;
+    background-color: green;
 }
 .color-żółty {
-  background-color: gold;
-  color: black;
+    background-color: gold;
+    color: black;
+}
+
+/* Stylizacja dla przycisku rzucania kostką */
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Ustawienia dla sekcji informacyjnej */
+.info-panel {
+    margin: 20px auto;
+    text-align: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
